@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+   mongodb:
+     image: mongo
+     volumes:
+       - ~/mongodb_data:/data/mongodb_data
+     restart: always
+     ports: 
+      - "27017:27017"
+     environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+   python:
+     image: python:3.6.5
+     ports:
+      #  - "8000:80"
+       - "5000:5000"
+     restart: always
+     volumes:
+      - ~/Desktop/python:/python
+     links:
+      - mongodb

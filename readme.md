@@ -3,6 +3,7 @@
 学习docker的仓库
 
 ## 基于docker的wordpress
+
 - docker-compose up -d
 - docker compose down --vlolumes 删除所有内容
 - docker compose down 不删除数据库
@@ -83,7 +84,11 @@ ONBUILD 配置当前创建的镜像作为其他新建镜像的基础镜像
 ## docker-compose
 
 命令
-docker-compose <command> 
+docker-compose [ -f ][options]  [command]
+docker-compose -f stack.yaml up -d 指定file文件，创建并且运行容器 以守护进程方式
+
+## [command]
+
 build 构建服务
 help  获得帮助
 kill 停止容器
@@ -92,6 +97,7 @@ port 打印端口
 ps  列出容器
 pull 拉取镜像
 rm 删除容器
+down 停止容器
 run 在服务上执行命令    $ docker-compose run ubuntu ping docker.com
 scale 指定运行的容器个数
 start 启动已经存在的容器
@@ -99,30 +105,83 @@ stop 停止容器
 docker-compose up -d 会在后台启动并创建所有的容器
 
 ## docker-compose yaml模板
-image: 镜像
-build 指定dockerfile的路径  build: /path/to/build/dir
-command 启动后默认执行的命令
-links 链接到其他容器
-external_links 链接到docker-compose外的容器
-ports 端口信息
-expose 内部端口暴露
-volumes 挂载路径设置
-volumes_from 从另一个容器或者服务挂载
-environment 环境变量
-environment:
-RACK_ENV: development
-SESSION_SECRET:
-environment:
 
-- RACK_ENV=development
-- SESSION_SECRET
-
-env_file 从文件中读取环境变量
-extends 基于已有的服务进行扩展
-extends:
-    file: common.yml
-    service: webapp
-相当于继承
+- image: 镜像
+- container_name 容器名称
+- deploy  指定配置为service deploy下可以指定容器的份数，运行的策略等等..
+  deploy:
+         replicas: 6
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      endpoint_mode:
+      labels:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
 
 
+
+- build 指定dockerfile的路径  build: /path/to/build/dir
+- command 启动后默认执行的命令
+- secret 密码信息的储存
+- links 链接到其他容器  会共享一些东西,Link的容器可以通过name来进行通讯
+- external_links 链接到docker-compose外的容器
+- ports 端口信息 端口映射方式:  - "8000:80"  左边为主机上的端口，右边为容器内的
+- expose 内部端口暴露
+- entrypoint entrypoint: /code/entrypoint.sh 覆盖掉默认的entrypoint
+- logging 选择log driver docker 有这几种可以供选择，syslog,jsonfile,journald等等...
+- network_mode 选择网络的模式?
+- volumes 挂载路径设置
+  使用·绝对路径挂载，前面是主机目录，后面是容器目录
+  - /opt/data:/var/lib/mysql
+  - ./cache:/tmp/cache  以compose为中心的相对挂载
+  - ~/configs:/etc/configs/:ro 用户的相对路径
+  -  datavolume:/var/lib/mysql 已经存在的数据卷
+- depends_on: 依赖于，不知道和Link的区别   docker-compose命令运行的时候会先从被依赖的部分开始运行，比如
+version: '3'
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis
+  db:
+    image: postgres
+运行docker-compose up web  其他两个也会运行，因为有依赖。
+运行 docker-compose up  会先运行数据库
+- dns 配置dns服务器
+- volumes_from 从另一个容器或者服务挂载
+- environment 环境变量
+  environment:
+  RACK_ENV: development
+  SESSION_SECRET:
+  environment:
+    - RACK_ENV=development
+    - SESSION_SECRET
+- env_file 从文件中读取环境变量
+- extends 基于已有的服务进行扩展
+  extends:
+      file: common.yml
+      service: webapp
+  相当于继承
+
+## docker修改镜像源 mac
+
+修改 demon advanced
+{
+  "debug" : true,
+  "registry-mirrors" : [
+    "http://registry.docker-cn.com"
+  ],
+  "experimental" : true
+}
 
