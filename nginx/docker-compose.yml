@@ -1,0 +1,9 @@
+web:
+  image: nginx
+  volumes: 
+    - /Users/icecola/Desktop/hello_docker/nginx/html/:/usr/share/nginx/html
+  ports: 
+   - "8080:80" 
+  environment: 
+    - NGINX_PORT=80
+
