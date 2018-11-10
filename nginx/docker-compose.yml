@@ -1,7 +1,8 @@
 web:
   image: nginx
   volumes: 
-    - /Users/icecola/Desktop/hello_docker/nginx/html/:/usr/share/nginx/html
+    - /Users/icecola/Desktop/hello_docker/nginx/html:/usr/share/nginx/html
+    - /Users/icecola/Desktop/hello_docker/nginx/conf.d:/etc/nginx/conf.d
   ports: 
    - "8080:80" 
   environment: 
