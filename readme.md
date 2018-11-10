@@ -11,6 +11,9 @@
 本机挂载目录到docker:
 docker run -d -P --name web -v /src/webapp:/opt/webapp training/webapp python app.py
 加载主机的/src/webapp 目录到容器的/opt/webapp目录。
+挂载必须绝对路径才行  
+指定挂载模式:  rw ro rw is read and write ro is read only
+
 
 ## 网络
 
@@ -55,7 +58,7 @@ run <command> 在shell终端中执行，即bin/sh  run ["","param1","param2"] �
 
 CMD["executable","param1","param2"] 使用exec执行，每个dockerfile只会有一条cmd命令
 
-EXPOSE 暴露端口
+EXPOSE 暴露端口  EXPOSE 8080:80
 
 ENV 环境变量
 

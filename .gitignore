@@ -211,3 +211,4 @@ fabric.properties
 * .xml
 *.csv
 .vscode/
+.log
