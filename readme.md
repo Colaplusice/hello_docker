@@ -188,3 +188,8 @@ services:
   "experimental" : true
 }
 
+## docker 查看container ip
+
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
+
+docker ps |grep mq |awk '{print $1}' | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'

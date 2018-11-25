@@ -55,3 +55,25 @@ debug: Debugging information that can be useful to pinpoint where a problem is o
     endscript
 }
 ```
+
+使用 Vaurien 来为server 降速
+pip install vaurien
+
+8000端口 访问google降速 20%
+vaurien --protocol http --proxy localhost:8000 --backend google.com:80 \
+        --behavior 20:delay
+使用ini文件
+
+```
+[vaurien]
+backend = google.com:80
+proxy = localhost:8000
+protocol = http
+behavior = 20:delay
+
+[behavior:delay]
+sleep = 2
+```
+
+通过api访问
+vaurien --http
