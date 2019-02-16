@@ -23,7 +23,7 @@ docker-compose down  停掉
 
 ## 架设国旗服务器
 
-docker run --name base-nginx -p 8001:8001 -p 8080:80  -v /Users/icecola/Desktop/hello_docker/nginx/conf.d:/etc/nginx/conf.d:ro -v /Users/icecola/Desktop/hello_docker/nginx/country_flag/countries/:/home/countries/ -v /Users/icecola/Desktop/hello_docker/nginx/html:/usr/share/nginx/html:ro  -v /Users/icecola/Desktop/hello_docker/nginx/logs:/var/log/nginx -d nginx
+docker run --name base-nginx -p 8001:8001 -p 8080:80  -v ~/Desktop/hello_docker/nginx/conf.d:/etc/nginx/conf.d:ro -v ~/Desktop/hello_docker/nginx/country_flag/countries/:/home/countries/ -v ~/Desktop/hello_docker/nginx/html:/usr/share/nginx/html:ro  -v ~/Desktop/hello_docker/nginx/logs:/var/log/nginx -d nginx
 
 发现无法定位到Log  指定Log file
 
@@ -37,6 +37,8 @@ warn: Something out of the ordinary happened, but not a cause for concern.
 notice: Something normal, but worth noting has happened.
 info: An informational message that might be nice to know.
 debug: Debugging information that can be useful to pinpoint where a problem is occurring.
+
+## 403forbidden
 
 ## 设置Log 文件大小
 

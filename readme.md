@@ -30,6 +30,7 @@ web容器 docker run -d -P --name web --link db:db traing/webapp python app.py
 父容器即是link左边的容器，比如web容器
 可以通过ping测试链接的容器 ping db
 可以链接多个父容器到子容器上
+删除所有容器:  docker ps -a |awk '{print $1}'|tail -n +2 |xargs docker rm
 
 ### docker网络原理
 
@@ -84,6 +85,14 @@ ONBUILD 配置当前创建的镜像作为其他新建镜像的基础镜像
 容器的原理
 利用Linux命名空间作为权限的隔离控制，利用cgroups来做资源分配
 
+使用cache建镜像
+
+docker build --cache-from myimage:v1.0 -t myimage:v1.1 .
+
+## image 
+
+删除镜像: docker
+
 ## docker-compose
 
 命令
@@ -129,12 +138,10 @@ docker-compose up -d 会在后台启动并创建所有的容器
           cpus: '0.25'
           memory: 20M
 
-
-
 - build 指定dockerfile的路径  build: /path/to/build/dir
-- command 启动后默认执行的命令
+- command 启动后默认执行的命令  command: ["bundle", "exec", "thin", "-p", "3000"]
 - secret 密码信息的储存
-- links 链接到其他容器  会共享一些东西,Link的容器可以通过name来进行通讯
+- links 链接到其他容器  会共享一些东西,Link的容器可以通过name来进行通讯避免了使用ip来通讯
 - external_links 链接到docker-compose外的容器
 - ports 端口信息 端口映射方式:  - "8000:80"  左边为主机上的端口，右边为容器内的
 - expose 内部端口暴露
@@ -146,8 +153,31 @@ docker-compose up -d 会在后台启动并创建所有的容器
   - /opt/data:/var/lib/mysql
   - ./cache:/tmp/cache  以compose为中心的相对挂载
   - ~/configs:/etc/configs/:ro 用户的相对路径
-  -  datavolume:/var/lib/mysql 已经存在的数据卷
+  - datavolume:/var/lib/mysql 已经存在的数据卷
+  
+- top level volumes:
+   An entry under the top-level volumes key can be empty, in which case it uses the default driver configured by the Engine (in most cases, this is the local driver). Optionally, you can configure it with the following keys 
+  如果是在最顶级的路径下指定volumes 并且进行命名类似于: db_data:/var/lib/mysql 表示volumes可以在多个容器间进行共享。这样可以取代volume from这个语法，常见的volume定义:
+  volumes:
+
+```
+  # Just specify a path and let the Engine create a volume
+  - /var/lib/mysql
+
+  # Specify an absolute path mapping
+  - /opt/data:/var/lib/mysql
+
+  # Path on the host, relative to the Compose file
+  - ./cache:/tmp/cache
+
+  # User-relative path
+  - ~/configs:/etc/configs/:ro
+
+  # Named volume
+  - datavolume:/var/lib/mysql
+```
 - depends_on: 依赖于，不知道和Link的区别   docker-compose命令运行的时候会先从被依赖的部分开始运行，比如
+```
 version: '3'
 services:
   web:
@@ -159,8 +189,10 @@ services:
     image: redis
   db:
     image: postgres
+```
 运行docker-compose up web  其他两个也会运行，因为有依赖。
 运行 docker-compose up  会先运行数据库
+
 - dns 配置dns服务器
 - volumes_from 从另一个容器或者服务挂载
 - environment 环境变量
@@ -193,3 +225,8 @@ services:
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
 
 docker ps |grep mq |awk '{print $1}' | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+
+
+## 复制文件到容器
+
+ docker cp hello_flask.sql hello_flask_db_1:/home/hello_flask.sql
