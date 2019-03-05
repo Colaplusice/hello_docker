@@ -11,3 +11,6 @@ mongodb的默认储存文件路径 /data/db
 
 docker 命令运行，指定config文件
 $ docker run --name some-mongo -v /my/custom:/etc/mongo -d mongo --config /etc/mongo/mongod.conf
+
+默认用户名 密码
+admin:pass

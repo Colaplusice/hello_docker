@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  redis:
+    image: redis:4.0
+    volumes:
+      - /data/redis/data:/data
+    restart: always
+  flask_celery:
+    depends_on:
+      - redis
+    build: .
+    image: flask_celery:latest
+    ports:
+      - 5000:5000
+    restart: always
+    environment:
+      REDIS_HOST: redis
+    command: "flask run"
+  celery:
+    depends_on:
+      - redis
+    image: flask_celery:latest
+    # build: .
+    restart: always
+    environment:
+      REDIS_HOST: redis
+    command: "celery -A app.celery_app worker -l info"
+  celery_beat:
+    depends_on: 
+      - redis
+    image: flask_celery:latest
+    restart: always
+    environment:
+      REDIS_HOST: redis
+    command: "celery beat -A app.celery_app -l info"
+
+
+volumes:
+  redis:

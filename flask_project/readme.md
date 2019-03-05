@@ -1,2 +1,2 @@
-# hello_flask 项目的dockerfile
+# flask_celery 项目的dockerfile
 

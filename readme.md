@@ -160,7 +160,7 @@ docker-compose up -d 会在后台启动并创建所有的容器
   如果是在最顶级的路径下指定volumes 并且进行命名类似于: db_data:/var/lib/mysql 表示volumes可以在多个容器间进行共享。这样可以取代volume from这个语法，常见的volume定义:
   volumes:
 
-```
+```docker
   # Just specify a path and let the Engine create a volume
   - /var/lib/mysql
 
@@ -176,8 +176,12 @@ docker-compose up -d 会在后台启动并创建所有的容器
   # Named volume
   - datavolume:/var/lib/mysql
 ```
-- depends_on: 依赖于，不知道和Link的区别   docker-compose命令运行的时候会先从被依赖的部分开始运行，比如
-```
+
+-  datavolume:/var/lib/mysql 已经存在的数据卷
+- depends_on: 如果要访问通过公共网络访问其他容器，depend on加上其他容器。就可以通过service name来访问到其他容器。
+      docker-compose命令运行的时候会先从被依赖的部分开始运行，比如
+
+```docker
 version: '3'
 services:
   web:
